@@ -804,7 +804,7 @@
       window.scrollTo(0, 0);
     }
 
-    // ── FIREBASE + LOCALSTORAGE DUAL PERSISTENCE ───────────────────
+    // ── PERSISTENCE: localStorage (instant) + Firebase (cloud sync) ─
     const DB     = 'https://roseforce-75b06-default-rtdb.asia-southeast1.firebasedatabase.app';
     const LS_KEY = 'aeqs-tasks-v2';
 
@@ -815,11 +815,39 @@
       try { localStorage.setItem(LS_KEY, JSON.stringify(tasks)); } catch {}
     }
     function lsPatch(id, data) {
-      const tasks  = lsLoad();
-      tasks[id]    = Object.assign(tasks[id] || {}, data);
-      // clean up null values
+      const tasks = lsLoad();
+      tasks[id]   = Object.assign(tasks[id] || {}, data);
       Object.keys(tasks[id]).forEach(k => { if (tasks[id][k] === null) delete tasks[id][k]; });
       lsSave(tasks);
+    }
+
+    // Migrate any data saved under old localStorage keys
+    function migrateOldData() {
+      const current = lsLoad();
+      if (Object.keys(current).length > 0) return current; // already on new format
+      const old = {
+        due:     JSON.parse(localStorage.getItem('aeqs-due-v1')      || '{}'),
+        done:    JSON.parse(localStorage.getItem('aeqs-tracker-v1')  || '{}'),
+        comment: JSON.parse(localStorage.getItem('aeqs-comments-v1') || '{}'),
+        column:  JSON.parse(localStorage.getItem('aeqs-columns-v1')  || '{}'),
+      };
+      const ids = new Set([
+        ...Object.keys(old.due), ...Object.keys(old.done),
+        ...Object.keys(old.comment), ...Object.keys(old.column)
+      ]);
+      if (ids.size === 0) return current;
+      const migrated = {};
+      ids.forEach(id => {
+        migrated[id] = {
+          due:     old.due[id]     || null,
+          done:    !!old.done[id],
+          comment: old.comment[id] || null,
+          column:  old.column[id]  || null,
+        };
+      });
+      lsSave(migrated);
+      console.log('Migrated', ids.size, 'tasks from old localStorage format');
+      return migrated;
     }
 
     async function fbGet(path) {
@@ -836,19 +864,17 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
-      } catch(e) { console.warn('Firebase write failed — data saved locally', e); }
+      } catch(e) { console.warn('Firebase write failed — data safe in localStorage', e); }
     }
 
-    // Write to BOTH — localStorage is instant, Firebase is cloud sync
     function saveTask(id, data) {
-      lsPatch(id, data);
-      fbPatch('/tasks/' + id, data);
+      lsPatch(id, data);          // instant, always works
+      fbPatch('/tasks/' + id, data); // async cloud sync
     }
 
-    // Load from Firebase, fill any gaps from localStorage
     async function loadTasks() {
+      const ls = migrateOldData(); // always read localStorage first
       const fb = await fbGet('/tasks') || {};
-      const ls = lsLoad();
       const merged = {};
       const allIds = new Set([...Object.keys(fb), ...Object.keys(ls)]);
       allIds.forEach(id => {
@@ -859,6 +885,16 @@
           comment: f.comment ?? l.comment ?? null,
           column:  f.column  ?? l.column  ?? null,
         };
+      });
+      // Push any localStorage-only data up to Firebase
+      Object.entries(merged).forEach(([id, data]) => {
+        const f = fb[id] || {};
+        const patch = {};
+        if (data.due     && !f.due)     patch.due     = data.due;
+        if (data.comment && !f.comment) patch.comment = data.comment;
+        if (data.done    && !f.done)    patch.done    = data.done;
+        if (data.column  && !f.column)  patch.column  = data.column;
+        if (Object.keys(patch).length)  fbPatch('/tasks/' + id, patch);
       });
       return merged;
     }
@@ -967,6 +1003,16 @@
         applyDueColor(dueInput, val);
         saveTask(id, { due: val || null });
         sortColumn(card.parentElement?.id);
+        // Flash "Saved ✓" confirmation
+        let flash = extras.querySelector('.due-saved');
+        if (!flash) {
+          flash = document.createElement('span');
+          flash.className = 'due-saved text-emerald-500 text-[10px] font-bold ml-1 transition-opacity';
+          flash.textContent = '✓ Saved';
+          extras.querySelector('.flex.items-center.gap-2').appendChild(flash);
+        }
+        flash.style.opacity = '1';
+        setTimeout(() => { flash.style.opacity = '0'; }, 2000);
       });
 
       // ── comment toggle
