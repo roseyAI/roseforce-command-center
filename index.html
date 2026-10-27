@@ -970,6 +970,7 @@
           '<input type="date" class="task-due text-xs font-bold text-slate-600 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors">' +
         '</div>' +
         '<div>' +
+          '<p class="comment-preview text-xs text-slate-500 leading-snug mb-1.5 hidden"></p>' +
           '<button class="comment-toggle text-xs text-slate-400 hover:text-[#0176D3] transition-colors flex items-center gap-1.5">' +
             '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
             '<span class="comment-label">Add note</span>' +
@@ -988,10 +989,9 @@
       if (data.comment) {
         extras.querySelector('.comment-input').value = data.comment;
         extras.querySelector('.comment-label').textContent = 'Edit note';
-        const p = document.createElement('p');
-        p.className = 'comment-display text-xs text-slate-600 mb-1.5 leading-snug';
-        p.textContent = data.comment;
-        extras.querySelector('.comment-area').prepend(p);
+        const preview = extras.querySelector('.comment-preview');
+        preview.textContent = data.comment;
+        preview.classList.remove('hidden');
       }
 
       // ── due date
@@ -1021,15 +1021,14 @@
       // ── comment save
       extras.querySelector('.comment-save').addEventListener('click', () => {
         const val     = extras.querySelector('.comment-input').value.trim();
-        let display   = extras.querySelector('.comment-display');
+        const preview = extras.querySelector('.comment-preview');
         if (val) {
-          if (!display) {
-            display = document.createElement('p');
-            display.className = 'comment-display text-xs text-slate-600 mb-1.5 leading-snug';
-            extras.querySelector('.comment-area').prepend(display);
-          }
-          display.textContent = val;
-        } else if (display) { display.remove(); }
+          preview.textContent = val;
+          preview.classList.remove('hidden');
+        } else {
+          preview.textContent = '';
+          preview.classList.add('hidden');
+        }
         extras.querySelector('.comment-label').textContent = val ? 'Edit note' : 'Add note';
         extras.querySelector('.comment-area').classList.add('hidden');
         saveTask(id, { comment: val || null });
