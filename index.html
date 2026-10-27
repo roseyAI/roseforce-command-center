@@ -690,9 +690,9 @@
   <!-- Celebration popup -->
   <div id="celebrate-popup" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
     <div id="celebrate-box" class="pointer-events-auto hidden bg-white rounded-2xl shadow-2xl border border-slate-200 px-10 py-8 flex flex-col items-center gap-3 text-center scale-95 transition-all duration-200">
-      <span class="text-5xl">👍</span>
-      <p class="text-xl font-extrabold text-slate-900 tracking-tight">Great job, Rose!</p>
-      <p class="text-sm text-slate-500">Keep crushing it 💪</p>
+      <span class="text-5xl">🎉</span>
+      <p class="text-xl font-extrabold text-slate-900 tracking-tight">YASSSS!</p>
+      <p class="text-sm text-slate-500">We love to see it.</p>
       <button onclick="closeCelebrate()" class="mt-1 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors">Dismiss</button>
     </div>
   </div>
@@ -896,13 +896,35 @@
     let dragSrc   = null;
 
     // ── CELEBRATION POPUP ──────────────────────────────────────────
+    const CELEBRATIONS = [
+      { emoji: '👏', msg: 'Look at you go!',       sub: 'Absolutely nailed it.' },
+      { emoji: '🔥', msg: 'On fire today!',         sub: 'Someone\'s getting things DONE.' },
+      { emoji: '💅', msg: 'Checked off. Flawless.', sub: 'As expected, honestly.' },
+      { emoji: '🥳', msg: 'PARTY TIME!!!',          sub: 'Ok maybe just a small one.' },
+      { emoji: '🤌', msg: 'Chef\'s kiss.',           sub: 'That task didn\'t stand a chance.' },
+      { emoji: '🚀', msg: 'To the moon!',            sub: 'One small tick, one giant leap.' },
+      { emoji: '🎯', msg: 'Bullseye.',               sub: 'Right on target as always.' },
+      { emoji: '💪', msg: 'Task? Demolished.',       sub: 'Completely destroyed. Gone.' },
+      { emoji: '🏆', msg: 'Trophy unlocked.',        sub: 'Most productive person ever? Maybe.' },
+      { emoji: '⚡', msg: 'That was FAST.',          sub: 'Did you even break a sweat?' },
+      { emoji: '🎉', msg: 'YASSSS!',                sub: 'We love to see it.' },
+      { emoji: '😤', msg: 'Another one. Done.',      sub: 'Unstoppable. Unmatched. Unbothered.' },
+      { emoji: '🧠', msg: 'Big brain move.',         sub: 'Completing tasks before they complete you.' },
+      { emoji: '🌟', msg: 'Superstar behaviour.',    sub: 'Not surprised tbh.' },
+      { emoji: '🫡', msg: 'Task salutes you.',       sub: 'It had no choice but to get done.' },
+    ];
+
     let celebrateTimer = null;
     function celebrate() {
-      const box = document.getElementById('celebrate-box');
+      const box  = document.getElementById('celebrate-box');
+      const pick = CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)];
+      box.querySelector('span.text-5xl').textContent          = pick.emoji;
+      box.querySelector('p.text-xl').textContent              = pick.msg;
+      box.querySelector('p.text-sm').textContent              = pick.sub;
       clearTimeout(celebrateTimer);
       box.classList.remove('hidden');
       setTimeout(() => box.classList.remove('scale-95'), 10);
-      celebrateTimer = setTimeout(closeCelebrate, 3000);
+      celebrateTimer = setTimeout(closeCelebrate, 3500);
     }
     function closeCelebrate() {
       const box = document.getElementById('celebrate-box');
