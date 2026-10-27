@@ -707,6 +707,16 @@
     </main>
   </div>
 
+  <!-- Celebration popup -->
+  <div id="celebrate-popup" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+    <div id="celebrate-box" class="pointer-events-auto hidden bg-white rounded-2xl shadow-2xl border border-slate-200 px-10 py-8 flex flex-col items-center gap-3 text-center scale-95 transition-all duration-200">
+      <span class="text-5xl">👍</span>
+      <p class="text-xl font-extrabold text-slate-900 tracking-tight">Great job, Rose!</p>
+      <p class="text-sm text-slate-500">Keep crushing it 💪</p>
+      <button onclick="closeCelebrate()" class="mt-1 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors">Dismiss</button>
+    </div>
+  </div>
+
   <script>
     // Initialize icons
     lucide.createIcons();
@@ -793,6 +803,21 @@
     const COL_IDS = ['col-pre-event', 'col-day-of', 'col-post-event'];
     let dragSrc   = null;
 
+    // ── CELEBRATION POPUP ──────────────────────────────────────────
+    let celebrateTimer = null;
+    function celebrate() {
+      const box = document.getElementById('celebrate-box');
+      clearTimeout(celebrateTimer);
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.remove('scale-95'), 10);
+      celebrateTimer = setTimeout(closeCelebrate, 3000);
+    }
+    function closeCelebrate() {
+      const box = document.getElementById('celebrate-box');
+      box.classList.add('scale-95');
+      setTimeout(() => box.classList.add('hidden'), 200);
+    }
+
     function updateDoneCount() {
       const total = document.querySelectorAll('.task-check').length;
       const done  = document.querySelectorAll('.task-check:checked').length;
@@ -835,7 +860,7 @@
       extras.innerHTML =
         '<div class="flex items-center gap-2">' +
           '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
-          '<input type="date" class="task-due text-xs text-slate-500 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors">' +
+          '<input type="date" class="task-due text-xs font-bold text-slate-600 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors">' +
         '</div>' +
         '<div>' +
           '<button class="comment-toggle text-xs text-slate-400 hover:text-[#0176D3] transition-colors flex items-center gap-1.5">' +
@@ -919,6 +944,7 @@
           applyDoneStyle(card, name, chk.checked);
           updateDoneCount();
           fbPatch('/tasks/' + id, { done: chk.checked });
+          if (chk.checked) celebrate();
         });
 
         buildCardExtras(card, id, data);
