@@ -769,23 +769,37 @@
       window.scrollTo(0, 0);
     }
 
-    // ── TASK TRACKER ───────────────────────────────────────────────
-    const TRACKER_KEY   = 'aeqs-tracker-v1';
-    const COMMENTS_KEY  = 'aeqs-comments-v1';
-    const DUEDATES_KEY  = 'aeqs-due-v1';
+    // ── FIREBASE ───────────────────────────────────────────────────
+    const DB = 'https://roseforce-75b06-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-    function loadStore(key) {
-      try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; }
+    async function fbGet(path) {
+      try {
+        const res = await fetch(DB + path + '.json');
+        return res.ok ? await res.json() : null;
+      } catch { return null; }
     }
-    function saveStore(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+    async function fbPatch(path, data) {
+      try {
+        await fetch(DB + path + '.json', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+      } catch(e) { console.warn('Firebase write failed', e); }
+    }
+
+    // ── TASK TRACKER ───────────────────────────────────────────────
+    const COL_IDS = ['col-pre-event', 'col-day-of', 'col-post-event'];
+    let dragSrc   = null;
 
     function updateDoneCount() {
       const total = document.querySelectorAll('.task-check').length;
       const done  = document.querySelectorAll('.task-check:checked').length;
-      const el = document.getElementById('tracker-done-count');
+      const el    = document.getElementById('tracker-done-count');
       if (!el) return;
       el.textContent = done + ' / ' + total + ' done';
-      el.className = done === total && total > 0
+      el.className   = done === total && total > 0
         ? 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300'
         : 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
     }
@@ -797,112 +811,119 @@
       name.classList.toggle('text-slate-800', !done);
     }
 
-    function initTracker() {
-      const checks   = loadStore(TRACKER_KEY);
-      const comments = loadStore(COMMENTS_KEY);
-      const dues     = loadStore(DUEDATES_KEY);
-
-      document.querySelectorAll('.task-card').forEach(card => {
-        const id   = card.dataset.id;
-        const chk  = card.querySelector('.task-check');
-        const name = card.querySelector('.task-name');
-        if (!chk || !name || !id) return;
-
-        // ── restore checkbox
-        if (checks[id]) { chk.checked = true; applyDoneStyle(card, name, true); }
-        chk.addEventListener('change', () => {
-          const done = chk.checked;
-          const s = loadStore(TRACKER_KEY);
-          done ? (s[id] = true) : delete s[id];
-          saveStore(TRACKER_KEY, s);
-          applyDoneStyle(card, name, done);
-          updateDoneCount();
-        });
-
-        // ── inject due date + comment UI after the label
-        const extras = document.createElement('div');
-        extras.className = 'mt-3 pt-3 border-t border-slate-100 space-y-2';
-        extras.innerHTML =
-          // due date row
-          '<div class="flex items-center gap-2">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
-            '<input type="date" class="task-due text-xs text-slate-500 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors" ' +
-              'value="' + (dues[id] || '') + '" ' +
-              'placeholder="Add due date">' +
-          '</div>' +
-          // comment row
-          '<div>' +
-            '<button class="comment-toggle text-xs text-slate-400 hover:text-[#0176D3] transition-colors flex items-center gap-1.5">' +
-              '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
-              '<span class="comment-label">' + (comments[id] ? 'Edit note' : 'Add note') + '</span>' +
-            '</button>' +
-            '<div class="comment-area hidden mt-1.5">' +
-              (comments[id] ? '<p class="comment-display text-xs text-slate-600 mb-1.5 leading-snug">' + escHtml(comments[id]) + '</p>' : '') +
-              '<textarea class="comment-input w-full text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-2 resize-none focus:outline-none focus:border-[#0176D3] focus:ring-1 focus:ring-[#0176D3]/20" rows="2" placeholder="Add a note...">' + (comments[id] || '') + '</textarea>' +
-              '<button class="comment-save mt-1 text-[10px] font-semibold text-[#0176D3] hover:underline">Save</button>' +
-            '</div>' +
-          '</div>';
-
-        card.appendChild(extras);
-
-        // due date save
-        extras.querySelector('.task-due').addEventListener('change', e => {
-          const d = loadStore(DUEDATES_KEY);
-          e.target.value ? (d[id] = e.target.value) : delete d[id];
-          saveStore(DUEDATES_KEY, d);
-        });
-
-        // comment toggle
-        extras.querySelector('.comment-toggle').addEventListener('click', () => {
-          extras.querySelector('.comment-area').classList.toggle('hidden');
-        });
-
-        // comment save
-        extras.querySelector('.comment-save').addEventListener('click', () => {
-          const ta  = extras.querySelector('.comment-input');
-          const val = ta.value.trim();
-          const c   = loadStore(COMMENTS_KEY);
-          val ? (c[id] = val) : delete c[id];
-          saveStore(COMMENTS_KEY, c);
-          const display = extras.querySelector('.comment-display');
-          if (val) {
-            if (!display) {
-              const p = document.createElement('p');
-              p.className = 'comment-display text-xs text-slate-600 mb-1.5 leading-snug';
-              p.textContent = val;
-              extras.querySelector('.comment-area').prepend(p);
-            } else { display.textContent = val; }
-          } else if (display) { display.remove(); }
-          extras.querySelector('.comment-label').textContent = val ? 'Edit note' : 'Add note';
-          extras.querySelector('.comment-area').classList.add('hidden');
-        });
+    function sortColumn(colId) {
+      const col   = document.getElementById(colId);
+      if (!col) return;
+      const cards = [...col.querySelectorAll('.task-card')];
+      cards.sort((a, b) => {
+        const da = a.dataset.due, db = b.dataset.due;
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return da.localeCompare(db);
       });
-
-      updateDoneCount();
+      cards.forEach(c => col.appendChild(c));
     }
 
     function escHtml(str) {
       return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    initTracker();
+    function buildCardExtras(card, id, data) {
+      const extras = document.createElement('div');
+      extras.className = 'mt-3 pt-3 border-t border-slate-100 space-y-2';
+      extras.innerHTML =
+        '<div class="flex items-center gap-2">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+          '<input type="date" class="task-due text-xs text-slate-500 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors">' +
+        '</div>' +
+        '<div>' +
+          '<button class="comment-toggle text-xs text-slate-400 hover:text-[#0176D3] transition-colors flex items-center gap-1.5">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
+            '<span class="comment-label">Add note</span>' +
+          '</button>' +
+          '<div class="comment-area hidden mt-1.5">' +
+            '<textarea class="comment-input w-full text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-2 resize-none focus:outline-none focus:border-[#0176D3] focus:ring-1 focus:ring-[#0176D3]/20" rows="2" placeholder="Add a note..."></textarea>' +
+            '<button class="comment-save mt-1 text-[10px] font-semibold text-[#0176D3] hover:underline">Save</button>' +
+          '</div>' +
+        '</div>';
 
-    // ── DRAG AND DROP ──────────────────────────────────────────────
-    const COLUMNS_KEY  = 'aeqs-columns-v1';
-    const COL_IDS      = ['col-pre-event', 'col-day-of', 'col-post-event'];
-    let dragSrc = null;
+      // ── restore saved values
+      const dueInput = extras.querySelector('.task-due');
+      if (data.due) { dueInput.value = data.due; card.dataset.due = data.due; }
 
-    function initDragDrop() {
-      // Restore saved column assignments
-      const saved = loadStore(COLUMNS_KEY);
-      Object.entries(saved).forEach(([cardId, colId]) => {
-        const card = document.querySelector('[data-id="' + cardId + '"]');
-        const col  = document.getElementById(colId);
+      if (data.comment) {
+        extras.querySelector('.comment-input').value = data.comment;
+        extras.querySelector('.comment-label').textContent = 'Edit note';
+        const p = document.createElement('p');
+        p.className = 'comment-display text-xs text-slate-600 mb-1.5 leading-snug';
+        p.textContent = data.comment;
+        extras.querySelector('.comment-area').prepend(p);
+      }
+
+      // ── due date
+      dueInput.addEventListener('change', () => {
+        const val = dueInput.value;
+        card.dataset.due = val || '';
+        fbPatch('/tasks/' + id, { due: val || null });
+        sortColumn(card.parentElement?.id);
+      });
+
+      // ── comment toggle
+      extras.querySelector('.comment-toggle').addEventListener('click', () => {
+        extras.querySelector('.comment-area').classList.toggle('hidden');
+      });
+
+      // ── comment save
+      extras.querySelector('.comment-save').addEventListener('click', () => {
+        const val     = extras.querySelector('.comment-input').value.trim();
+        let display   = extras.querySelector('.comment-display');
+        if (val) {
+          if (!display) {
+            display = document.createElement('p');
+            display.className = 'comment-display text-xs text-slate-600 mb-1.5 leading-snug';
+            extras.querySelector('.comment-area').prepend(display);
+          }
+          display.textContent = val;
+        } else if (display) { display.remove(); }
+        extras.querySelector('.comment-label').textContent = val ? 'Edit note' : 'Add note';
+        extras.querySelector('.comment-area').classList.add('hidden');
+        fbPatch('/tasks/' + id, { comment: val || null });
+      });
+
+      card.appendChild(extras);
+    }
+
+    async function initTracker() {
+      const tasks = await fbGet('/tasks') || {};
+
+      // ── restore column assignments first
+      Object.entries(tasks).forEach(([id, data]) => {
+        if (!data.column) return;
+        const card = document.querySelector('[data-id="' + id + '"]');
+        const col  = document.getElementById(data.column);
         if (card && col) col.appendChild(card);
       });
 
-      // Make cards draggable
       document.querySelectorAll('.task-card').forEach(card => {
+        const id   = card.dataset.id;
+        const chk  = card.querySelector('.task-check');
+        const name = card.querySelector('.task-name');
+        if (!chk || !name || !id) return;
+        const data = tasks[id] || {};
+
+        // restore done
+        if (data.done) { chk.checked = true; applyDoneStyle(card, name, true); }
+
+        chk.addEventListener('change', () => {
+          applyDoneStyle(card, name, chk.checked);
+          updateDoneCount();
+          fbPatch('/tasks/' + id, { done: chk.checked });
+        });
+
+        buildCardExtras(card, id, data);
+
+        // draggable
         card.draggable = true;
         card.style.cursor = 'grab';
         card.addEventListener('dragstart', e => {
@@ -912,39 +933,35 @@
         });
         card.addEventListener('dragend', () => {
           card.classList.remove('opacity-40', 'scale-95');
-          document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
           dragSrc = null;
         });
       });
 
-      // Make columns drop targets
+      // ── column drop targets
       COL_IDS.forEach(colId => {
         const col = document.getElementById(colId);
         if (!col) return;
         col.addEventListener('dragover', e => {
           e.preventDefault();
-          e.dataTransfer.dropEffect = 'move';
           const after = getDragAfterElement(col, e.clientY);
-          if (dragSrc) {
-            if (after) col.insertBefore(dragSrc, after);
-            else col.appendChild(dragSrc);
-          }
+          if (dragSrc) { after ? col.insertBefore(dragSrc, after) : col.appendChild(dragSrc); }
         });
         col.addEventListener('drop', e => {
           e.preventDefault();
           if (!dragSrc) return;
-          const s = loadStore(COLUMNS_KEY);
-          s[dragSrc.dataset.id] = colId;
-          saveStore(COLUMNS_KEY, s);
+          col.classList.remove('ring-2', 'ring-[#0176D3]/30', 'rounded-xl');
+          fbPatch('/tasks/' + dragSrc.dataset.id, { column: colId });
           updateDoneCount();
         });
-        // Visual highlight on dragenter/dragleave
         col.addEventListener('dragenter', () => col.classList.add('ring-2', 'ring-[#0176D3]/30', 'rounded-xl'));
         col.addEventListener('dragleave', e => {
           if (!col.contains(e.relatedTarget)) col.classList.remove('ring-2', 'ring-[#0176D3]/30', 'rounded-xl');
         });
-        col.addEventListener('drop', () => col.classList.remove('ring-2', 'ring-[#0176D3]/30', 'rounded-xl'));
       });
+
+      // ── sort all columns by due date on load
+      COL_IDS.forEach(sortColumn);
+      updateDoneCount();
     }
 
     function getDragAfterElement(col, y) {
@@ -956,32 +973,7 @@
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    initDragDrop();
-
-    // ── AUTO-SORT BY DUE DATE ──────────────────────────────────────
-    function sortColumn(colId) {
-      const col = document.getElementById(colId);
-      if (!col) return;
-      const dues  = loadStore(DUEDATES_KEY);
-      const cards = [...col.querySelectorAll('.task-card')];
-      cards.sort((a, b) => {
-        const da = dues[a.dataset.id], db = dues[b.dataset.id];
-        if (!da && !db) return 0;
-        if (!da) return 1;
-        if (!db) return -1;
-        return da.localeCompare(db);
-      });
-      cards.forEach(c => col.appendChild(c));
-    }
-
-    // Patch the due date change handler to also sort
-    document.addEventListener('change', e => {
-      if (!e.target.classList.contains('task-due')) return;
-      const card = e.target.closest('.task-card');
-      if (!card) return;
-      const col = card.parentElement;
-      if (col) sortColumn(col.id);
-    });
+    initTracker();
 
   </script>
 </body>
