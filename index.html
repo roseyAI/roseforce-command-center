@@ -821,10 +821,9 @@
       lsSave(tasks);
     }
 
-    // Migrate any data saved under old localStorage keys
+    // Migrate any data saved under old localStorage keys — always merges, never skips
     function migrateOldData() {
       const current = lsLoad();
-      if (Object.keys(current).length > 0) return current; // already on new format
       const old = {
         due:     JSON.parse(localStorage.getItem('aeqs-due-v1')      || '{}'),
         done:    JSON.parse(localStorage.getItem('aeqs-tracker-v1')  || '{}'),
@@ -835,19 +834,18 @@
         ...Object.keys(old.due), ...Object.keys(old.done),
         ...Object.keys(old.comment), ...Object.keys(old.column)
       ]);
-      if (ids.size === 0) return current;
-      const migrated = {};
+      if (ids.size === 0) return current; // nothing old to merge
+      let changed = false;
       ids.forEach(id => {
-        migrated[id] = {
-          due:     old.due[id]     || null,
-          done:    !!old.done[id],
-          comment: old.comment[id] || null,
-          column:  old.column[id]  || null,
-        };
+        if (!current[id]) current[id] = {};
+        // Only fill gaps — never overwrite data already in new format
+        if (old.due[id]     && !current[id].due)     { current[id].due     = old.due[id];     changed = true; }
+        if (old.done[id]    && !current[id].done)    { current[id].done    = true;             changed = true; }
+        if (old.comment[id] && !current[id].comment) { current[id].comment = old.comment[id]; changed = true; }
+        if (old.column[id]  && !current[id].column)  { current[id].column  = old.column[id];  changed = true; }
       });
-      lsSave(migrated);
-      console.log('Migrated', ids.size, 'tasks from old localStorage format');
-      return migrated;
+      if (changed) { lsSave(current); console.log('Migrated old task data into aeqs-tasks-v2'); }
+      return current;
     }
 
     async function fbGet(path) {
