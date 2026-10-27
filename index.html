@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoseForce Command Center</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans & IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .font-mono {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6F9] text-slate-800 antialiased min-h-screen flex selection:bg-[#0176D3]/20 selection:text-[#0176D3]">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="w-72 bg-[#032D60] text-slate-200 border-r border-[#084282] min-h-screen flex flex-col shrink-0 select-none transition-all duration-300">
+    <!-- Header / Brand -->
+    <div class="h-16 flex items-center justify-between px-4 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 via-purple-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md shadow-purple-900/30 shrink-0 text-lg">
+          🌸
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-white tracking-tight text-base leading-tight">
+            RoseForce
+          </span>
+          <span class="text-xs text-slate-400">Command Center</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learning & Trailhead Milestone Callout (Moved to top so visible without scrolling) -->
+    <div class="p-3 border-b border-white/10 bg-black/15 shrink-0">
+      <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-400/25 text-amber-200 text-xs space-y-2">
+        <div class="flex items-start gap-2">
+          <span class="text-amber-400 text-base shrink-0">🔔</span>
+          <div class="space-y-0.5">
+            <p class="font-bold tracking-tight text-amber-300 uppercase text-[10px]">Learning Milestone</p>
+            <p class="leading-snug text-slate-200 text-[11px]">DON'T FORGET YOUR OWN LEARNING! Finish your Trailhead courses.</p>
+          </div>
+        </div>
+        <div class="pt-1 flex items-center justify-between text-[11px] border-t border-amber-400/15">
+          <span class="text-amber-300 font-mono font-bold">145 Badges</span>
+          <a href="https://trailhead.salesforce.com" target="_blank" class="inline-flex items-center gap-1 font-semibold text-amber-300 hover:text-white underline">
+            Open Trailhead <i data-lucide="external-link" class="w-3 h-3"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav List -->
+    <div class="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+      <!-- Section: HOME -->
+      <div class="space-y-1">
+        <h3 class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">HOME</h3>
+        <a href="#dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#0176D3] text-white shadow-sm transition-all">
+          <i data-lucide="layout-dashboard" class="w-4.5 h-4.5"></i>
+          <span>Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Section: PROGRAMS -->
+      <div class="space-y-1">
+        <h3 class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">PROGRAMS</h3>
+        <div class="space-y-0.5">
+          <a href="#ae-quickstart" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white transition-all">
+            <span class="flex items-center gap-3">
+              <i data-lucide="target" class="w-4.5 h-4.5 text-slate-400"></i>
+              <span>AE Quickstart</span>
+            </span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">Active</span>
+          </a>
+          <a href="#ae-qs-advanced" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white transition-all">
+            <span class="flex items-center gap-3">
+              <i data-lucide="rocket" class="w-4.5 h-4.5 text-slate-400"></i>
+              <span>AE QS Advanced</span>
+            </span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-700/60 text-slate-300 border border-slate-600/30">Oct 9</span>
+          </a>
+          <a href="#ph-enablement" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white transition-all">
+            <span class="flex items-center gap-3">
+              <i data-lucide="globe" class="w-4.5 h-4.5 text-slate-400"></i>
+              <span>PH Enablement</span>
+            </span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-700/60 text-slate-300 border border-slate-600/30">Recurring</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Section: RESOURCES -->
+      <div class="space-y-1">
+        <h3 class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">RESOURCES</h3>
+        <div class="space-y-0.5 text-slate-300">
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="video" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>Session Recordings</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="trending-up" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>CSAT Tracker Dashboard</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="mail" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>Comms Templates</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="book-open" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>AE Onboarding Guide</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="calendar" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>SE Calendar</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="compass" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>Wayfinder</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="bar-chart-2" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>ACT Learning Consumption</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Section: TOOLS -->
+      <div class="space-y-1">
+        <h3 class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">TOOLS</h3>
+        <div class="space-y-0.5 text-slate-300">
+          <button onclick="showPage('tracker')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all text-slate-300">
+            <i data-lucide="check-square" class="w-4.5 h-4.5 text-emerald-400"></i>
+            <span>AE Quickstart Task Tracker</span>
+          </button>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all">
+            <i data-lucide="mic" class="w-4.5 h-4.5 text-slate-400"></i>
+            <span>AE Speaker Ecosystem</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- TOP HEADER -->
+    <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
+      <div class="flex items-center gap-4 flex-1 max-w-xl">
+        <!-- Sidebar Toggle -->
+        <button onclick="toggleSidebar()" id="sidebar-toggle-btn" class="w-9 h-9 rounded-lg flex items-center justify-center text-[#0176D3] hover:bg-[#0176D3]/10 transition-colors shrink-0" title="Toggle sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+
+        <!-- Search Bar -->
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input type="text" placeholder="Search Quick Actions, Programs, Decks, or Runbooks... (⌘K)" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0176D3] focus:bg-white focus:ring-2 focus:ring-[#0176D3]/15 transition-all">
+        </div>
+      </div>
+
+      <!-- Right Controls -->
+      <div class="flex items-center gap-3">
+        <button class="relative p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
+        </button>
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-500 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shadow-sm ring-2 ring-white">
+            RR
+          </div>
+          <div class="hidden md:flex flex-col text-left">
+            <span class="text-xs font-bold text-slate-800 leading-tight">Rose Renolla</span>
+            <span class="text-[10px] text-slate-500">Enablement Lead</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="flex-1 overflow-y-auto">
+
+      <!-- ── HOME PAGE ── -->
+      <div id="page-home" class="px-6 sm:px-10 py-8 max-w-7xl w-full mx-auto space-y-8">
+      
+      <!-- GREETING & COUNTDOWN HERO -->
+      <section class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+        <div class="space-y-3 max-w-2xl">
+          <h1 id="greeting-title" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Good evening, Rose.
+          </h1>
+          <p class="text-base text-slate-600 italic leading-relaxed">
+            "Connection is why we're here. It gives purpose and meaning to our lives." —
+            <span class="font-semibold not-italic text-[#0176D3]">Brené Brown</span>
+          </p>
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <!-- Salesforce Fiscal Calendar Badge -->
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#0176D3]/10 text-[#0176D3] border border-[#0176D3]/25 shadow-2xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0176D3]"></span>
+              <span id="salesforce-fiscal">FY27 Q3 • Week 33</span>
+            </span>
+
+            <!-- Manila Date Badge -->
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span id="live-date">Sunday, September 13, 2026</span>
+            </span>
+
+            <!-- Manila Live Time Badge -->
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200 shadow-2xs font-mono">
+              <span class="text-sm">🇵🇭</span>
+              <span class="font-sans font-bold text-slate-500 text-[11px] tracking-wide uppercase">Manila</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span id="live-time" class="tabular-nums font-semibold">10:28:00 PM</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Cohort Badges with Calendar Icon Date Tiles -->
+        <div class="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+          <div class="flex items-center justify-between gap-6 px-3.5 py-2.5 rounded-xl border border-rose-200 bg-rose-50/70 hover:bg-rose-50 transition-all cursor-pointer shadow-xs">
+            <div class="flex items-center gap-3">
+              <!-- Calendar Icon Tile with Date Inside -->
+              <div class="w-11 h-12 rounded-lg bg-white border border-slate-200 shadow-2xs overflow-hidden flex flex-col items-center justify-between shrink-0 select-none">
+                <div class="w-full text-[9px] font-extrabold text-center py-0.5 tracking-wider leading-none uppercase text-white bg-rose-600">
+                  OCT
+                </div>
+                <div class="flex-1 w-full flex items-center justify-center font-extrabold text-slate-800 text-xs px-0.5 leading-none">
+                  5–7
+                </div>
+                <div class="w-full h-1 bg-slate-100 border-t border-slate-100"></div>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-800 leading-tight">AE Quickstart</h4>
+                <div class="flex items-center gap-1.5 text-xs text-slate-600 font-semibold mt-0.5">
+                  <i data-lucide="calendar" class="w-3 h-3 text-rose-600"></i>
+                  <span>Oct 5, 6, 7</span>
+                </div>
+              </div>
+            </div>
+            <div class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-200 text-rose-800">
+              22d
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-6 px-3.5 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-50 transition-all cursor-pointer shadow-xs">
+            <div class="flex items-center gap-3">
+              <!-- Calendar Icon Tile with Date Inside -->
+              <div class="w-11 h-12 rounded-lg bg-white border border-slate-200 shadow-2xs overflow-hidden flex flex-col items-center justify-between shrink-0 select-none">
+                <div class="w-full text-[9px] font-extrabold text-center py-0.5 tracking-wider leading-none uppercase text-white bg-[#0176D3]">
+                  OCT
+                </div>
+                <div class="flex-1 w-full flex items-center justify-center font-extrabold text-slate-800 text-xs px-0.5 leading-none">
+                  9
+                </div>
+                <div class="w-full h-1 bg-slate-100 border-t border-slate-100"></div>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-800 leading-tight">AE QS Advanced</h4>
+                <div class="flex items-center gap-1.5 text-xs text-slate-600 font-semibold mt-0.5">
+                  <i data-lucide="calendar" class="w-3 h-3 text-[#0176D3]"></i>
+                  <span>Oct 9</span>
+                </div>
+              </div>
+            </div>
+            <div class="px-2.5 py-1 rounded-full text-xs font-bold bg-sky-200 text-sky-800">
+              26d
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICK ACTIONS GRID -->
+      <section class="space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">QUICK ACTIONS</h2>
+          <span class="text-xs text-slate-400 font-medium">6 Shortcuts</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Card 1 -->
+          <div class="group bg-white rounded-xl border border-slate-200 p-5 hover:border-[#0176D3]/60 transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-50 text-slate-700 group-hover:text-[#0176D3] flex items-center justify-center transition-colors mb-3">
+                <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 group-hover:text-[#0176D3] transition-colors">Session Prep</h3>
+              <p class="mt-1 text-sm text-slate-500">Agendas, showflows, and speaker decks</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-400">Open Runbook</span>
+              <span class="font-semibold text-[#0176D3] group-hover:underline">Launch →</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="group bg-white rounded-xl border border-slate-200 p-5 hover:border-[#0176D3]/60 transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-50 text-slate-700 group-hover:text-[#0176D3] flex items-center justify-center transition-colors mb-3">
+                <i data-lucide="users" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 group-hover:text-[#0176D3] transition-colors">New Hire Tracker</h3>
+              <p class="mt-1 text-sm text-slate-500">AE onboarding status and progress</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-400">View 24 Cohort AEs</span>
+              <span class="font-semibold text-[#0176D3] group-hover:underline">Launch →</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="group bg-white rounded-xl border border-slate-200 p-5 hover:border-[#0176D3]/60 transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-50 text-slate-700 group-hover:text-[#0176D3] flex items-center justify-center transition-colors mb-3">
+                <i data-lucide="library" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 group-hover:text-[#0176D3] transition-colors">Content Library</h3>
+              <p class="mt-1 text-sm text-slate-500">Decks, guides, and enablement resources</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-400">Browse 140+ Assets</span>
+              <span class="font-semibold text-[#0176D3] group-hover:underline">Launch →</span>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="group bg-white rounded-xl border border-slate-200 p-5 hover:border-[#0176D3]/60 transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-50 text-slate-700 group-hover:text-[#0176D3] flex items-center justify-center transition-colors mb-3">
+                <i data-lucide="film" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 group-hover:text-[#0176D3] transition-colors">Showflow Decks</h3>
+              <p class="mt-1 text-sm text-slate-500">Google Drive — session runbooks</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-400">Google Drive Folder</span>
+              <span class="font-semibold text-[#0176D3] group-hover:underline">Launch →</span>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="group bg-white rounded-xl border border-slate-200 p-5 hover:border-[#0176D3]/60 transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-50 text-slate-700 group-hover:text-[#0176D3] flex items-center justify-center transition-colors mb-3">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 group-hover:text-[#0176D3] transition-colors">Speaker Decks</h3>
+              <p class="mt-1 text-sm text-slate-500">Presentation decks and materials</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-400">Oct Cohort Slide Master</span>
+              <span class="font-semibold text-[#0176D3] group-hover:underline">Launch →</span>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div onclick="showPage('tracker')" class="group bg-white rounded-xl border border-slate-200 p-5 hover:border-[#0176D3]/60 transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-blue-50 text-slate-700 group-hover:text-[#0176D3] flex items-center justify-center transition-colors mb-3">
+                <i data-lucide="check-square" class="w-5 h-5 text-emerald-600"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 group-hover:text-[#0176D3] transition-colors">AE Quickstart Task Tracker</h3>
+              <p class="mt-1 text-sm text-slate-500">Project management and coordination</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-400">26 tasks · 3 phases</span>
+              <span class="font-semibold text-[#0176D3] group-hover:underline">Open →</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      </div><!-- /page-home -->
+
+      <!-- ── TRACKER PAGE ── -->
+      <div id="page-tracker" class="hidden px-6 sm:px-10 py-8 max-w-7xl w-full mx-auto space-y-5">
+
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm text-slate-500">
+          <button onclick="showPage('home')" class="hover:text-[#0176D3] font-medium transition-colors">← Dashboard</button>
+          <span>/</span>
+          <span class="text-slate-800 font-semibold">AE Quickstart Task Tracker</span>
+        </div>
+
+        <section id="ae-quickstart-tracker" class="space-y-5">
+
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">AE Quickstart Task Tracker</h2>
+          </div>
+          <span id="tracker-done-count" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">0 / 26 done</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+          <!-- ── PRE-EVENT ── -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 px-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#0176D3] shrink-0"></span>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Pre-Event</h3>
+              <span class="text-xs text-slate-400 font-medium">19 tasks</span>
+            </div>
+            <div class="space-y-2" id="col-pre-event">
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBN8K9B2T">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Secure Speakers</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBN8KD37H">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Confirm attendees</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBYB29SH3">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Send email to managers on new hires</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBYB26T8D">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Get a list of new hire AEs for this cohort</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC1LVDA1L">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Agenda sign off</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC3E8RLUS">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Update Showflow Decks</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC5GPRH09">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Send out Gcal Invites (with virtual meeting link)</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC7ARR528">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Create Slack Channel for attendees</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CCY191U7J">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Create sessions in ACT</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CCC18AN9Y">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Book rooms</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CCC18AN9Y-2">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Create ACT courses</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">HIGH</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC7ARMH8C">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Provide speakers with deck, template + new hire profile</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC5GPMRB3">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Set up briefing call with speakers</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC3E8U9K4">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Send out Slack Comms about pre-work</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC1LVGY30">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Comms for main channels</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBXCY73DZ">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Update facilitator decks</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CCY18R1BJ">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Look at the Agenda for next Quickstart</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">—</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC3E8KLH0">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Quickstart — DATES</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">—</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBXCY135Z">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Check Holiday dates of ASEAN countries</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">—</span>
+                  </div>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── DAY-OF ── -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 px-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-violet-500 shrink-0"></span>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Day-Of</h3>
+              <span class="text-xs text-slate-400 font-medium">1 task</span>
+            </div>
+            <div class="space-y-2" id="col-day-of">
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBXCY9SBD">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Remind Speakers on program</p>
+                    <p class="text-xs text-slate-400 mt-1 leading-snug">Remind speakers of their time slot — be mindful of not going overtime.</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">LOW</span>
+                  </div>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── POST-EVENT ── -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 px-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Post-Event</h3>
+              <span class="text-xs text-slate-400 font-medium">6 tasks</span>
+            </div>
+            <div class="space-y-2" id="col-post-event">
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CCY194JTS">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Share feedback and thank speakers</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC7ARSUR2">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Send final comms with program summary</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBN8KG39V">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Slack comms with resources</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">MED</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC5GPUNGZ">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">South Asia distribution list post</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">—</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CBYB2DKNH">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Update Enablement Calendar for details</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">—</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all" data-id="Rec0CC1LVJTGE">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="task-name text-sm font-semibold text-slate-800 leading-snug">Measure impact after 1, 2 &amp; 3 months</p>
+                    <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">—</span>
+                  </div>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      </div><!-- /page-tracker -->
+
+    </main>
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Live clock update for Manila Timezone (PHT, GMT+8)
+    function updateClock() {
+      const now = new Date();
+      const timeElem = document.getElementById('live-time');
+      const dateElem = document.getElementById('live-date');
+      const greetingElem = document.getElementById('greeting-title');
+
+      if (timeElem) {
+        timeElem.textContent = now.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Manila',
+          hour: 'numeric',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        });
+      }
+      if (dateElem) {
+        dateElem.textContent = now.toLocaleDateString('en-US', {
+          timeZone: 'Asia/Manila',
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+      if (greetingElem) {
+        const manilaHour = parseInt(new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Manila',
+          hour: 'numeric',
+          hour12: false
+        }).format(now), 10);
+        let greet = 'Good evening';
+        if (manilaHour >= 5 && manilaHour < 12) greet = 'Good morning';
+        else if (manilaHour >= 12 && manilaHour < 17) greet = 'Good afternoon';
+        greetingElem.textContent = `${greet}, Rose.`;
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ── SIDEBAR TOGGLE ─────────────────────────────────────────────
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const isOpen  = !sidebar.classList.contains('w-0');
+      sidebar.classList.toggle('w-72', !isOpen);
+      sidebar.classList.toggle('w-0', isOpen);
+      sidebar.classList.toggle('overflow-hidden', isOpen);
+      sidebar.classList.toggle('border-r', !isOpen);
+    }
+
+    // ── PAGE NAVIGATION ────────────────────────────────────────────
+    function showPage(name) {
+      document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden'));
+      const page = document.getElementById('page-' + name);
+      if (page) page.classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    // ── TASK TRACKER ───────────────────────────────────────────────
+    const TRACKER_KEY   = 'aeqs-tracker-v1';
+    const COMMENTS_KEY  = 'aeqs-comments-v1';
+    const DUEDATES_KEY  = 'aeqs-due-v1';
+
+    function loadStore(key) {
+      try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; }
+    }
+    function saveStore(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+    function updateDoneCount() {
+      const total = document.querySelectorAll('.task-check').length;
+      const done  = document.querySelectorAll('.task-check:checked').length;
+      const el = document.getElementById('tracker-done-count');
+      if (!el) return;
+      el.textContent = done + ' / ' + total + ' done';
+      el.className = done === total && total > 0
+        ? 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300'
+        : 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+    }
+
+    function applyDoneStyle(card, name, done) {
+      card.classList.toggle('opacity-60', done);
+      name.classList.toggle('line-through', done);
+      name.classList.toggle('text-slate-400', done);
+      name.classList.toggle('text-slate-800', !done);
+    }
+
+    function initTracker() {
+      const checks   = loadStore(TRACKER_KEY);
+      const comments = loadStore(COMMENTS_KEY);
+      const dues     = loadStore(DUEDATES_KEY);
+
+      document.querySelectorAll('.task-card').forEach(card => {
+        const id   = card.dataset.id;
+        const chk  = card.querySelector('.task-check');
+        const name = card.querySelector('.task-name');
+        if (!chk || !name || !id) return;
+
+        // ── restore checkbox
+        if (checks[id]) { chk.checked = true; applyDoneStyle(card, name, true); }
+        chk.addEventListener('change', () => {
+          const done = chk.checked;
+          const s = loadStore(TRACKER_KEY);
+          done ? (s[id] = true) : delete s[id];
+          saveStore(TRACKER_KEY, s);
+          applyDoneStyle(card, name, done);
+          updateDoneCount();
+        });
+
+        // ── inject due date + comment UI after the label
+        const extras = document.createElement('div');
+        extras.className = 'mt-3 pt-3 border-t border-slate-100 space-y-2';
+        extras.innerHTML =
+          // due date row
+          '<div class="flex items-center gap-2">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+            '<input type="date" class="task-due text-xs text-slate-500 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors" ' +
+              'value="' + (dues[id] || '') + '" ' +
+              'placeholder="Add due date">' +
+          '</div>' +
+          // comment row
+          '<div>' +
+            '<button class="comment-toggle text-xs text-slate-400 hover:text-[#0176D3] transition-colors flex items-center gap-1.5">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
+              '<span class="comment-label">' + (comments[id] ? 'Edit note' : 'Add note') + '</span>' +
+            '</button>' +
+            '<div class="comment-area hidden mt-1.5">' +
+              (comments[id] ? '<p class="comment-display text-xs text-slate-600 mb-1.5 leading-snug">' + escHtml(comments[id]) + '</p>' : '') +
+              '<textarea class="comment-input w-full text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-2 resize-none focus:outline-none focus:border-[#0176D3] focus:ring-1 focus:ring-[#0176D3]/20" rows="2" placeholder="Add a note...">' + (comments[id] || '') + '</textarea>' +
+              '<button class="comment-save mt-1 text-[10px] font-semibold text-[#0176D3] hover:underline">Save</button>' +
+            '</div>' +
+          '</div>';
+
+        card.appendChild(extras);
+
+        // due date save
+        extras.querySelector('.task-due').addEventListener('change', e => {
+          const d = loadStore(DUEDATES_KEY);
+          e.target.value ? (d[id] = e.target.value) : delete d[id];
+          saveStore(DUEDATES_KEY, d);
+        });
+
+        // comment toggle
+        extras.querySelector('.comment-toggle').addEventListener('click', () => {
+          extras.querySelector('.comment-area').classList.toggle('hidden');
+        });
+
+        // comment save
+        extras.querySelector('.comment-save').addEventListener('click', () => {
+          const ta  = extras.querySelector('.comment-input');
+          const val = ta.value.trim();
+          const c   = loadStore(COMMENTS_KEY);
+          val ? (c[id] = val) : delete c[id];
+          saveStore(COMMENTS_KEY, c);
+          const display = extras.querySelector('.comment-display');
+          if (val) {
+            if (!display) {
+              const p = document.createElement('p');
+              p.className = 'comment-display text-xs text-slate-600 mb-1.5 leading-snug';
+              p.textContent = val;
+              extras.querySelector('.comment-area').prepend(p);
+            } else { display.textContent = val; }
+          } else if (display) { display.remove(); }
+          extras.querySelector('.comment-label').textContent = val ? 'Edit note' : 'Add note';
+          extras.querySelector('.comment-area').classList.add('hidden');
+        });
+      });
+
+      updateDoneCount();
+    }
+
+    function escHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    initTracker();
+
+    // ── DRAG AND DROP ──────────────────────────────────────────────
+    const COLUMNS_KEY  = 'aeqs-columns-v1';
+    const COL_IDS      = ['col-pre-event', 'col-day-of', 'col-post-event'];
+    let dragSrc = null;
+
+    function initDragDrop() {
+      // Restore saved column assignments
+      const saved = loadStore(COLUMNS_KEY);
+      Object.entries(saved).forEach(([cardId, colId]) => {
+        const card = document.querySelector('[data-id="' + cardId + '"]');
+        const col  = document.getElementById(colId);
+        if (card && col) col.appendChild(card);
+      });
+
+      // Make cards draggable
+      document.querySelectorAll('.task-card').forEach(card => {
+        card.draggable = true;
+        card.style.cursor = 'grab';
+        card.addEventListener('dragstart', e => {
+          dragSrc = card;
+          setTimeout(() => card.classList.add('opacity-40', 'scale-95'), 0);
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        card.addEventListener('dragend', () => {
+          card.classList.remove('opacity-40', 'scale-95');
+          document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+          dragSrc = null;
+        });
+      });
+
+      // Make columns drop targets
+      COL_IDS.forEach(colId => {
+        const col = document.getElementById(colId);
+        if (!col) return;
+        col.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          const after = getDragAfterElement(col, e.clientY);
+          if (dragSrc) {
+            if (after) col.insertBefore(dragSrc, after);
+            else col.appendChild(dragSrc);
+          }
+        });
+        col.addEventListener('drop', e => {
+          e.preventDefault();
+          if (!dragSrc) return;
+          const s = loadStore(COLUMNS_KEY);
+          s[dragSrc.dataset.id] = colId;
+          saveStore(COLUMNS_KEY, s);
+          updateDoneCount();
+        });
+        // Visual highlight on dragenter/dragleave
+        col.addEventListener('dragenter', () => col.classList.add('ring-2', 'ring-[#0176D3]/30', 'rounded-xl'));
+        col.addEventListener('dragleave', e => {
+          if (!col.contains(e.relatedTarget)) col.classList.remove('ring-2', 'ring-[#0176D3]/30', 'rounded-xl');
+        });
+        col.addEventListener('drop', () => col.classList.remove('ring-2', 'ring-[#0176D3]/30', 'rounded-xl'));
+      });
+    }
+
+    function getDragAfterElement(col, y) {
+      const cards = [...col.querySelectorAll('.task-card:not(.opacity-40)')];
+      return cards.reduce((closest, child) => {
+        const box    = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    initDragDrop();
+
+    // ── AUTO-SORT BY DUE DATE ──────────────────────────────────────
+    function sortColumn(colId) {
+      const col = document.getElementById(colId);
+      if (!col) return;
+      const dues  = loadStore(DUEDATES_KEY);
+      const cards = [...col.querySelectorAll('.task-card')];
+      cards.sort((a, b) => {
+        const da = dues[a.dataset.id], db = dues[b.dataset.id];
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return da.localeCompare(db);
+      });
+      cards.forEach(c => col.appendChild(c));
+    }
+
+    // Patch the due date change handler to also sort
+    document.addEventListener('change', e => {
+      if (!e.target.classList.contains('task-due')) return;
+      const card = e.target.closest('.task-card');
+      if (!card) return;
+      const col = card.parentElement;
+      if (col) sortColumn(col.id);
+    });
+
+  </script>
+</body>
+</html>
