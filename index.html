@@ -386,7 +386,7 @@
           <span id="tracker-done-count" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">0 / 26 done</span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
 
           <!-- ── PRE-EVENT ── -->
           <div class="space-y-3">
@@ -679,6 +679,18 @@
             </div>
           </div>
 
+          <!-- ── COMPLETED ── -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 px-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Completed</h3>
+              <span id="col-completed-count" class="text-xs text-slate-400 font-medium">0 tasks</span>
+            </div>
+            <div class="space-y-2 min-h-16 rounded-xl border-2 border-dashed border-emerald-200 p-2" id="col-completed">
+              <p class="text-xs text-slate-400 italic text-center mt-3 empty-state">Check off tasks to move them here ✓</p>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -892,7 +904,7 @@
     }
 
     // ── TASK TRACKER ───────────────────────────────────────────────
-    const COL_IDS = ['col-pre-event', 'col-day-of', 'col-post-event'];
+    const COL_IDS = ['col-pre-event', 'col-day-of', 'col-post-event', 'col-completed'];
     let dragSrc   = null;
 
     // ── CELEBRATION POPUP ──────────────────────────────────────────
@@ -941,6 +953,16 @@
       el.className   = done === total && total > 0
         ? 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300'
         : 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+      // Update completed column count
+      const cc = document.getElementById('col-completed-count');
+      if (cc) cc.textContent = done + (done === 1 ? ' task' : ' tasks');
+    }
+
+    function toggleCompletedEmpty() {
+      const col   = document.getElementById('col-completed');
+      const empty = col?.querySelector('.empty-state');
+      const cards = col?.querySelectorAll('.task-card');
+      if (empty) empty.style.display = cards?.length ? 'none' : 'block';
     }
 
     function applyDoneStyle(card, name, done) {
@@ -1056,13 +1078,19 @@
     async function initTracker() {
       const tasks = await loadTasks();
 
-      // ── restore column assignments first
+      // ── restore positions: done → col-completed, else → saved column
       Object.entries(tasks).forEach(([id, data]) => {
-        if (!data.column) return;
         const card = document.querySelector('[data-id="' + id + '"]');
-        const col  = document.getElementById(data.column);
-        if (card && col) col.appendChild(card);
+        if (!card) return;
+        if (data.done) {
+          card.dataset.homeCol = data.column || card.parentElement?.id || 'col-pre-event';
+          document.getElementById('col-completed')?.appendChild(card);
+        } else if (data.column) {
+          const col = document.getElementById(data.column);
+          if (col) col.appendChild(card);
+        }
       });
+      toggleCompletedEmpty();
 
       document.querySelectorAll('.task-card').forEach(card => {
         const id   = card.dataset.id;
@@ -1076,9 +1104,27 @@
 
         chk.addEventListener('change', () => {
           applyDoneStyle(card, name, chk.checked);
+          if (chk.checked) {
+            // Remember home column before moving
+            const home = card.parentElement?.id;
+            if (home && home !== 'col-completed') {
+              card.dataset.homeCol = home;
+              saveTask(id, { done: true, column: home });
+            } else {
+              saveTask(id, { done: true });
+            }
+            document.getElementById('col-completed').appendChild(card);
+            toggleCompletedEmpty();
+            celebrate();
+          } else {
+            // Move back to home column
+            const home = card.dataset.homeCol || lsLoad()[id]?.column || 'col-pre-event';
+            const target = document.getElementById(home);
+            if (target) { target.appendChild(card); sortColumn(home); }
+            saveTask(id, { done: false });
+            toggleCompletedEmpty();
+          }
           updateDoneCount();
-          saveTask(id, { done: chk.checked });
-          if (chk.checked) celebrate();
         });
 
         buildCardExtras(card, id, data);
