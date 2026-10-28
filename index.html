@@ -19,8 +19,9 @@
     .font-mono {
       font-family: 'IBM Plex Mono', monospace;
     }
-    .task-card:hover .card-delete { opacity: 1; }
-    .card-delete { opacity: 0; transition: opacity 0.15s; }
+    .task-card:hover .card-delete,
+    .task-card:hover .card-cal-btn { opacity: 1; }
+    .card-delete, .card-cal-btn { opacity: 0; transition: opacity 0.15s; }
   </style>
 </head>
 <body class="bg-[#F4F6F9] text-slate-800 antialiased min-h-screen flex selection:bg-[#0176D3]/20 selection:text-[#0176D3]">
@@ -396,6 +397,7 @@
               <span class="w-2.5 h-2.5 rounded-full bg-[#0176D3] shrink-0"></span>
               <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Pre-Event</h3>
               <span class="text-xs text-slate-400 font-medium">19 tasks</span>
+              <button onclick="openAddTask('col-pre-event')" class="ml-auto w-5 h-5 rounded-full bg-[#0176D3]/10 hover:bg-[#0176D3]/20 text-[#0176D3] flex items-center justify-center font-bold text-sm transition-colors" title="Add task">+</button>
             </div>
             <div class="space-y-2" id="col-pre-event">
 
@@ -595,6 +597,7 @@
               <span class="w-2.5 h-2.5 rounded-full bg-violet-500 shrink-0"></span>
               <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Day-Of</h3>
               <span class="text-xs text-slate-400 font-medium">1 task</span>
+              <button onclick="openAddTask('col-day-of')" class="ml-auto w-5 h-5 rounded-full bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 flex items-center justify-center font-bold text-sm transition-colors" title="Add task">+</button>
             </div>
             <div class="space-y-2" id="col-day-of">
 
@@ -618,6 +621,7 @@
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
               <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Post-Event</h3>
               <span class="text-xs text-slate-400 font-medium">6 tasks</span>
+              <button onclick="openAddTask('col-post-event')" class="ml-auto w-5 h-5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-sm transition-colors" title="Add task">+</button>
             </div>
             <div class="space-y-2" id="col-post-event">
 
@@ -699,6 +703,27 @@
       </div><!-- /page-tracker -->
 
     </main>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="add-task-overlay" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center px-4" onclick="if(event.target===this)closeAddTask()">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-slate-900">Add Task</h3>
+        <button onclick="closeAddTask()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">×</button>
+      </div>
+      <input id="new-task-name" type="text" placeholder="Task name..." class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 focus:outline-none focus:border-[#0176D3] focus:ring-2 focus:ring-[#0176D3]/15 transition-all">
+      <select id="new-task-priority" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 focus:outline-none focus:border-[#0176D3] text-slate-700 bg-white">
+        <option value="">No priority</option>
+        <option value="HIGH">🔴 High</option>
+        <option value="MED">🟡 Medium</option>
+        <option value="LOW">⚪ Low</option>
+      </select>
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeAddTask()" class="flex-1 py-2 text-sm font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+        <button onclick="submitNewTask()" class="flex-1 py-2 text-sm font-semibold text-white bg-[#0176D3] rounded-lg hover:bg-[#014486] transition-colors">Add Task</button>
+      </div>
+    </div>
   </div>
 
   <!-- Celebration popup -->
@@ -974,6 +999,92 @@
       name.classList.toggle('text-slate-800', !done);
     }
 
+    // ── ADD TASK MODAL ─────────────────────────────────────────────
+    let addTaskTargetCol = 'col-pre-event';
+
+    function openAddTask(colId) {
+      addTaskTargetCol = colId;
+      document.getElementById('new-task-name').value = '';
+      document.getElementById('new-task-priority').value = '';
+      document.getElementById('add-task-overlay').classList.remove('hidden');
+      setTimeout(() => document.getElementById('new-task-name').focus(), 50);
+    }
+
+    function closeAddTask() {
+      document.getElementById('add-task-overlay').classList.add('hidden');
+    }
+
+    function submitNewTask() {
+      const name     = document.getElementById('new-task-name').value.trim();
+      const priority = document.getElementById('new-task-priority').value;
+      if (!name) { document.getElementById('new-task-name').focus(); return; }
+
+      const id   = 'custom-' + Date.now();
+      const data = { name, priority, done: false, due: null, comment: null, column: addTaskTargetCol };
+      saveTask(id, data);
+
+      const card = buildNewTaskCard(id, name, priority);
+      document.getElementById(addTaskTargetCol)?.appendChild(card);
+
+      // Wire up the new card (checkbox, extras, drag)
+      const chk  = card.querySelector('.task-check');
+      const tname = card.querySelector('.task-name');
+      chk.addEventListener('change', () => {
+        applyDoneStyle(card, tname, chk.checked);
+        if (chk.checked) {
+          const home = card.parentElement?.id;
+          if (home && home !== 'col-completed') { card.dataset.homeCol = home; saveTask(id, { done: true, column: home }); }
+          else saveTask(id, { done: true });
+          document.getElementById('col-completed').appendChild(card);
+          toggleCompletedEmpty(); celebrate();
+        } else {
+          const home = card.dataset.homeCol || lsLoad()[id]?.column || 'col-pre-event';
+          const target = document.getElementById(home);
+          if (target) { target.appendChild(card); sortColumn(home); }
+          saveTask(id, { done: false }); toggleCompletedEmpty();
+        }
+        updateDoneCount();
+      });
+      buildCardExtras(card, id, data);
+      card.draggable = true; card.style.cursor = 'grab';
+      card.addEventListener('dragstart', e => { dragSrc = card; setTimeout(() => card.classList.add('opacity-40','scale-95'),0); e.dataTransfer.effectAllowed='move'; });
+      card.addEventListener('dragend', () => { card.classList.remove('opacity-40','scale-95'); dragSrc=null; });
+
+      updateDoneCount();
+      closeAddTask();
+    }
+
+    function buildNewTaskCard(id, name, priority) {
+      const card = document.createElement('div');
+      card.className = 'task-card bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs hover:shadow-sm transition-all';
+      card.dataset.id = id;
+      const badge = priority
+        ? `<span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+            priority==='HIGH' ? 'bg-rose-50 text-rose-700 border border-rose-200' :
+            priority==='MED'  ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                                'bg-slate-100 text-slate-500 border border-slate-200'
+          }">${priority}</span>` : '';
+      card.innerHTML =
+        '<label class="flex items-start gap-3 cursor-pointer">' +
+          '<input type="checkbox" class="task-check mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 shrink-0">' +
+          '<div class="flex-1 min-w-0">' +
+            '<p class="task-name text-sm font-semibold text-slate-800 leading-snug">' + escHtml(name) + '</p>' +
+            badge +
+          '</div>' +
+        '</label>';
+      return card;
+    }
+
+    // Enter key submits the modal
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !document.getElementById('add-task-overlay').classList.contains('hidden')) {
+        submitNewTask();
+      }
+      if (e.key === 'Escape' && !document.getElementById('add-task-overlay').classList.contains('hidden')) {
+        closeAddTask();
+      }
+    });
+
     function makeCalUrl(taskName, dateStr) {
       if (!dateStr) return '#';
       const d     = dateStr.replace(/-/g, '');
@@ -995,6 +1106,7 @@
       if (dateStr) {
         link.href = makeCalUrl(taskName, dateStr);
         link.classList.remove('hidden');
+        // cal-btn opacity is controlled by CSS hover; remove hidden so it can show
       } else {
         link.classList.add('hidden');
         link.href = '#';
@@ -1048,9 +1160,13 @@
           '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
           '<input type="date" class="task-due text-xs font-bold text-slate-600 bg-transparent border-none outline-none cursor-pointer hover:text-[#0176D3] transition-colors">' +
         '</div>' +
-        '<div class="flex items-center justify-between mt-1">' +
-          '<a class="cal-link hidden text-[10px] font-semibold text-[#0176D3] hover:underline flex items-center gap-1" href="#" target="_blank">📅 Add to Calendar</a>' +
-          '<button class="card-delete text-[10px] text-rose-400 hover:text-rose-600 transition-colors ml-auto flex items-center gap-1 font-medium">🗑 Delete</button>' +
+        '<div class="flex items-center justify-end gap-2 mt-2">' +
+          '<a class="cal-link card-cal-btn hidden text-slate-400 hover:text-[#0176D3] transition-colors" href="#" target="_blank" title="Add to Google Calendar">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+          '</a>' +
+          '<button class="card-delete text-slate-400 hover:text-rose-500 transition-colors" title="Delete task">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
+          '</button>' +
         '</div>' +
         '<div>' +
           '<p class="comment-preview text-xs text-slate-500 leading-snug mb-1.5 hidden"></p>' +
@@ -1130,6 +1246,39 @@
 
     async function initTracker() {
       const tasks = await loadTasks();
+
+      // ── recreate any custom tasks not in HTML
+      Object.entries(tasks).forEach(([id, data]) => {
+        if (!id.startsWith('custom-') || !data.name) return;
+        if (document.querySelector('[data-id="' + id + '"]')) return;
+        const card = buildNewTaskCard(id, data.name, data.priority || '');
+        const colId = data.done ? 'col-completed' : (data.column || 'col-pre-event');
+        document.getElementById(colId)?.appendChild(card);
+        // wire checkbox
+        const chk  = card.querySelector('.task-check');
+        const nm   = card.querySelector('.task-name');
+        if (data.done) { chk.checked = true; applyDoneStyle(card, nm, true); card.dataset.homeCol = data.column || 'col-pre-event'; }
+        chk.addEventListener('change', () => {
+          applyDoneStyle(card, nm, chk.checked);
+          if (chk.checked) {
+            const home = card.parentElement?.id;
+            if (home && home !== 'col-completed') { card.dataset.homeCol = home; saveTask(id, { done: true, column: home }); }
+            else saveTask(id, { done: true });
+            document.getElementById('col-completed').appendChild(card);
+            toggleCompletedEmpty(); celebrate();
+          } else {
+            const home = card.dataset.homeCol || lsLoad()[id]?.column || 'col-pre-event';
+            const target = document.getElementById(home);
+            if (target) { target.appendChild(card); sortColumn(home); }
+            saveTask(id, { done: false }); toggleCompletedEmpty();
+          }
+          updateDoneCount();
+        });
+        buildCardExtras(card, id, data);
+        card.draggable = true; card.style.cursor = 'grab';
+        card.addEventListener('dragstart', e => { dragSrc = card; setTimeout(() => card.classList.add('opacity-40','scale-95'),0); e.dataTransfer.effectAllowed='move'; });
+        card.addEventListener('dragend', () => { card.classList.remove('opacity-40','scale-95'); dragSrc=null; });
+      });
 
       // ── restore positions: done → col-completed, else → saved column
       Object.entries(tasks).forEach(([id, data]) => {
